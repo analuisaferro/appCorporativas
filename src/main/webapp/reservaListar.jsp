@@ -11,7 +11,7 @@
     <h1>Reservas</h1>
 
     <%
-        List<Reserva> reservas = (List<Reserva>) request.getSession().getAttribute("reservas");
+        List<Reserva> reservas = (List<Reserva>) request.getAttribute("reservas");
         if (reservas == null || reservas.isEmpty()) {
     %>
         <p>Nenhuma reserva cadastrada.</p>
@@ -27,6 +27,7 @@
                     <th>Telefone</th>
                     <th>Email</th>
                     <th>Status</th>
+                    <th>Ações</th>
                 </tr>
             </thead>
             <tbody>
@@ -40,7 +41,11 @@
                     <td><%= h.getCpf() %></td>
                     <td><%= h.getTelefone() %></td>
                     <td><%= h.getEmail() %></td>
-                    <td><%= r.isStatus() %></td>
+                    <td><%= r.isStatus() ? "Confirmada" : "Pendente" %></td>
+                    <td>
+                        <a href="reservas?acao=editar&id=<%= r.getId() %>">Editar</a> |
+                        <a href="reservas?acao=excluir&id=<%= r.getId() %>">Excluir</a>
+                    </td>
                 </tr>
             <%
                 }
@@ -51,6 +56,6 @@
         }
     %>
     <br>
-    <a href="reservaCadastrar.jsp">Cadastrar nova reserva</a>
+    <a href="reservas?acao=novo">Cadastrar nova reserva</a>
 </body>
 </html>

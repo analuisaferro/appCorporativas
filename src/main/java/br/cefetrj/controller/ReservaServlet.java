@@ -1,9 +1,10 @@
 package br.cefetrj.controller;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
+import br.cefetrj.dao.HospedeDAO;
+import br.cefetrj.dao.ReservaDAO;
 import br.cefetrj.model.Hospede;
 import br.cefetrj.model.Reserva;
 import jakarta.servlet.RequestDispatcher;
@@ -15,54 +16,91 @@ import jakarta.servlet.http.HttpServletResponse;
 
 @WebServlet("/reservas")
 public class ReservaServlet extends HttpServlet {
+
     private static final long serialVersionUID = 1L;
+    private ReservaDAO reservaDAO;
+    private HospedeDAO hospedeDAO;
 
     public ReservaServlet() {
         super();
+        reservaDAO = new ReservaDAO();
+        hospedeDAO = new HospedeDAO();
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        List<Reserva> reservas = new ArrayList<>();
 
-        // Criando hóspedes falsos
-        Hospede h1 = new Hospede("Ana Ferro", "123.456.789-00", "11999990000", "ana@exemplo.com", "11999990001");
-        Hospede h2 = new Hospede("Bruno Silva", "987.654.321-00", "11988880000", "bruno@exemplo.com", "11988880001");
-        Hospede h3 = new Hospede("Carla Mendes", "111.222.333-44", "11977770000", "carla@exemplo.com", "11977770001");
+        String acao = request.getParameter("acao");
+        if (acao == null) acao = "listar";
 
-        // Criando reservas falsas
-        reservas.add(new Reserva(1, h1, true));
-        reservas.add(new Reserva(2, h2, false));
-        reservas.add(new Reserva(3, h3, true));
-
-        request.getSession().setAttribute("reservas", reservas);
-        RequestDispatcher rd = request.getRequestDispatcher("reservaListar.jsp");
-        rd.forward(request, response);
+        switch (acao) {
+            case "listar":
+                listarReservas(request, response);
+                break;
+            case "novo":
+                request.setAttribute("hospedes", hospedeDAO.listarTodos());
+                request.getRequestDispatcher("reservaCadastrar.jsp").forward(request, response);
+                break;
+            case "editar":
+                editarReserva(request, response);
+                break;
+            case "excluir":
+                excluirReserva(request, response);
+                break;
+            default:
+                listarReservas(request, response);
+                break;
+        }
     }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        String nome = request.getParameter("nome");
-        String cpf = request.getParameter("cpf");
-        String telefone = request.getParameter("telefone");
-        String email = request.getParameter("email");
-        String telefoneEmergencia = request.getParameter("telefoneEmergencia");
+        String idStr = request.getParameter("id");
+        Integer hospedeId = Integer.parseInt(request.getParameter("hospedeId"));
+        boolean status = Boolean.parseBoolean(request.getParameter("status"));
 
+        Hospede hospede = hospedeDAO.buscarPorId(hospedeId);
+        Reserva reserva;
 
-        Hospede hospede = new Hospede(nome, cpf, telefone, email, telefoneEmergencia);
+        if (idStr == null || idStr.isEmpty()) {
+            reserva = new Reserva(hospede, status);
+            reservaDAO.salvar(reserva);
+        } else {
+            Integer id = Integer.parseInt(idStr);
+            reserva = reservaDAO.buscarPorId(id);
+            if (reserva != null) {
+                reserva.setHospede(hospede);
+                reserva.setStatus(status);
+                reservaDAO.atualizar(reserva);
+            }
+        }
 
-        Integer id = Integer.parseInt(request.getParameter("id"));
-
-        String status = request.getParameter("status");
-        boolean disponivel = Boolean.parseBoolean(status);
-
-        Reserva reserva = new Reserva(id, hospede, disponivel);
-
+        response.sendRedirect(request.getContextPath() + "/reservas");
     }
 
-    protected void doDelete(HttpServletRequest request, HttpServletResponse response)
+    private void listarReservas(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        List<Reserva> reservas = reservaDAO.listarTodos();
+        request.setAttribute("reservas", reservas);
+        RequestDispatcher rd = request.getRequestDispatcher("reservaLista.jsp");
+        rd.forward(request, response);
     }
 
+    private void editarReserva(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        Integer id = Integer.parseInt(request.getParameter("id"));
+        Reserva reserva = reservaDAO.buscarPorId(id);
+        request.setAttribute("reserva", reserva);
+        request.setAttribute("hospedes", hospedeDAO.listarTodos());
+        RequestDispatcher rd = request.getRequestDispatcher("reservaCadastrar.jsp");
+        rd.forward(request, response);
+    }
+
+    private void excluirReserva(HttpServletRequest request, HttpServletResponse response)
+            throws IOException {
+        Integer id = Integer.parseInt(request.getParameter("id"));
+        reservaDAO.deletar(id);
+        response.sendRedirect(request.getContextPath() + "/reservas");
+    }
 }

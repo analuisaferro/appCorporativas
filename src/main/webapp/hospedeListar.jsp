@@ -10,7 +10,8 @@
     <h1>Hóspedes cadastrados</h1>
 
     <%
-        List<Hospede> hospedes = (List<Hospede>) request.getSession().getAttribute("hospedes");
+        List<Hospede> hospedes = (List<Hospede>) request.getAttribute("hospedes");
+
         if (hospedes == null || hospedes.isEmpty()) {
     %>
         <p>Nenhum hóspede cadastrado.</p>
@@ -24,6 +25,7 @@
                 <th>Telefone</th>
                 <th>Email</th>
                 <th>Telefone de Emergência</th>
+                <th>Ações</th>
             </tr>
             <%
                 for (Hospede h : hospedes) {
@@ -34,6 +36,10 @@
                     <td><%= h.getTelefone() %></td>
                     <td><%= h.getEmail() %></td>
                     <td><%= h.getTelefoneEmergencia() %></td>
+                    <td>
+                        <a href="hospedes?acao=editar&id=<%= h.getId() %>">Editar</a> |
+                        <a href="hospedes?acao=excluir&id=<%= h.getId() %>">Excluir</a>
+                    </td>
                 </tr>
             <%
                 }
@@ -44,6 +50,6 @@
     %>
 
     <br>
-    <a href="hospedeCadastrar.jsp">Cadastrar novo hóspede</a>
+    <a href="hospedes?acao=novo">Cadastrar novo hóspede</a>
 </body>
 </html>

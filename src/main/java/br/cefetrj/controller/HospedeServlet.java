@@ -1,9 +1,9 @@
 package br.cefetrj.controller;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
+import br.cefetrj.dao.HospedeDAO;
 import br.cefetrj.model.Hospede;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
@@ -14,43 +14,92 @@ import jakarta.servlet.http.HttpServletResponse;
 
 @WebServlet("/hospedes")
 public class HospedeServlet extends HttpServlet {
+
     private static final long serialVersionUID = 1L;
+    private HospedeDAO hospedeDAO;
 
     public HospedeServlet() {
         super();
+        hospedeDAO = new HospedeDAO();
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        List<Hospede> hospedes = new ArrayList<>();
-        
-        hospedes.add(new Hospede("Ana Ferro", "123.456.789-00", "11999990000", "ana@exemplo.com", "11999990001"));
-        hospedes.add(new Hospede("Bruno Silva", "987.654.321-00", "11988880000", "bruno@exemplo.com", "11988880001"));
-        hospedes.add(new Hospede("Carla Mendes", "111.222.333-44", "11977770000", "carla@exemplo.com", "11977770001"));
-        hospedes.add(new Hospede("Daniel Costa", "555.666.777-88", "11966660000", "daniel@exemplo.com", "11966660001"));
-        hospedes.add(new Hospede("Eduardo Lima", "999.888.777-66", "11955550000", "eduardo@exemplo.com", "11955550001"));
+        String acao = request.getParameter("acao");
+        if (acao == null) acao = "listar";
 
-        request.getSession().setAttribute("hospedes", hospedes);
-        RequestDispatcher rd = request.getRequestDispatcher("hospedeListar.jsp");
-        rd.forward(request, response);
+        switch (acao) {
+            case "listar":
+                listarHospedes(request, response);
+                break;
+            case "novo":
+                request.getRequestDispatcher("hospedeCadastrar.jsp").forward(request, response);
+                break;
+            case "editar":
+                editarHospede(request, response);
+                break;
+            case "excluir":
+                excluirHospede(request, response);
+                break;
+            default:
+                listarHospedes(request, response);
+                break;
+        }
     }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
+        String idStr = request.getParameter("id");
         String nome = request.getParameter("nome");
         String cpf = request.getParameter("cpf");
         String telefone = request.getParameter("telefone");
         String email = request.getParameter("email");
         String telefoneEmergencia = request.getParameter("telefoneEmergencia");
 
-        Hospede hospede = new Hospede(nome, cpf, telefone, email, telefoneEmergencia);
+        Hospede hospede;
 
+        if (idStr == null || idStr.isEmpty()) {
+            hospede = new Hospede(nome, cpf, telefone, email, telefoneEmergencia);
+            hospedeDAO.salvar(hospede);
+        } else {
+            int id = Integer.parseInt(idStr);
+            hospede = hospedeDAO.buscarPorId(id);
+            if (hospede != null) {
+                hospede.setNome(nome);
+                hospede.setCpf(cpf);
+                hospede.setTelefone(telefone);
+                hospede.setEmail(email);
+                hospede.setTelefoneEmergencia(telefoneEmergencia);
+                hospedeDAO.atualizar(hospede);
+            }
+        }
+
+        response.sendRedirect(request.getContextPath() + "/hospedes");
     }
 
-    protected void doDelete(HttpServletRequest request, HttpServletResponse response)
+    private void listarHospedes(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        List<Hospede> hospedes = hospedeDAO.listarTodos();
+        request.setAttribute("hospedes", hospedes);
+        RequestDispatcher rd = request.getRequestDispatcher("hospedeListar.jsp");
+        rd.forward(request, response);
     }
 
+    private void editarHospede(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        int id = Integer.parseInt(request.getParameter("id"));
+        Hospede hospede = hospedeDAO.buscarPorId(id);
+        request.setAttribute("hospede", hospede);
+        RequestDispatcher rd = request.getRequestDispatcher("hospedeCadastrar.jsp");
+        rd.forward(request, response);
+    }
+
+    private void excluirHospede(HttpServletRequest request, HttpServletResponse response)
+            throws IOException {
+        int id = Integer.parseInt(request.getParameter("id"));
+        hospedeDAO.deletar(id);
+        response.sendRedirect(request.getContextPath() + "/hospedes");
+    }
 }

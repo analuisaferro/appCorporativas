@@ -11,7 +11,8 @@
     <h1>Quartos cadastrados</h1>
 
     <%
-        List<Quarto> quartos = (List<Quarto>) request.getSession().getAttribute("quartos");
+        List<Quarto> quartos = (List<Quarto>) request.getAttribute("quartos");
+
         if (quartos == null || quartos.isEmpty()) {
     %>
         <p>Nenhum quarto cadastrado.</p>
@@ -24,6 +25,7 @@
                 <th>Tipo</th>
                 <th>Preço por Noite</th>
                 <th>Status</th>
+                <th>Ações</th>
             </tr>
             <%
                 for (Quarto q : quartos) {
@@ -32,8 +34,10 @@
                     <td><%= q.getNumero() %></td>
                     <td><%= q.getTipo() %></td>
                     <td>R$ <%= q.getPrecoNoite() %></td>
+                    <td><%= q.isStatus() ? "Ocupado" : "Livre" %></td>
                     <td>
-                        <%= q.isStatus() ? "Ocupado" : "Livre" %>
+                        <a href="quartos?acao=editar&id=<%= q.getId() %>">Editar</a> |
+                        <a href="quartos?acao=excluir&id=<%= q.getId() %>">Excluir</a>
                     </td>
                 </tr>
             <%
@@ -45,6 +49,6 @@
     %>
 
     <br>
-    <a href="quartoCadastrar.jsp">Cadastrar novo quarto</a>
+    <a href="quartos?acao=novo">Cadastrar novo quarto</a>
 </body>
 </html>

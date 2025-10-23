@@ -10,7 +10,8 @@
     <h1>Funcionários Cadastrados</h1>
 
     <%
-        List<Funcionario> funcionarios = (List<Funcionario>) request.getSession().getAttribute("funcionarios");
+        List<Funcionario> funcionarios = (List<Funcionario>) request.getAttribute("funcionarios");
+
         if (funcionarios == null || funcionarios.isEmpty()) {
     %>
         <p>Nenhum funcionário cadastrado.</p>
@@ -22,10 +23,10 @@
                 <th>Nome</th>
                 <th>CPF</th>
                 <th>Telefone</th>
-                <th>Email</th>
                 <th>Cargo</th>
                 <th>Salário</th>
                 <th>Login</th>
+                <th>Ações</th>
             </tr>
             <%
                 for (Funcionario f : funcionarios) {
@@ -34,10 +35,13 @@
                     <td><%= f.getNome() %></td>
                     <td><%= f.getCpf() %></td>
                     <td><%= f.getTelefone() %></td>
-                    <td><%= f.getEmail() %></td>
                     <td><%= f.getCargo() %></td>
                     <td>R$ <%= f.getSalario() %></td>
                     <td><%= f.getLogin() %></td>
+                    <td>
+                        <a href="funcionarios?acao=editar&id=<%= f.getId() %>">Editar</a> |
+                        <a href="funcionarios?acao=excluir&id=<%= f.getId() %>">Excluir</a>
+                    </td>
                 </tr>
             <%
                 }
@@ -48,6 +52,6 @@
     %>
 
     <br>
-    <a href="funcionarioCadastrar.jsp">Cadastrar novo funcionário</a>
+    <a href="funcionarios?acao=novo">Cadastrar novo funcionário</a>
 </body>
 </html>

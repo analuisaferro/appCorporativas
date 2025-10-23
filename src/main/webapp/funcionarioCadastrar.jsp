@@ -18,9 +18,6 @@
         <label>Telefone:</label><br>
         <input type="text" name="telefone"><br><br>
 
-        <label>Email:</label><br>
-        <input type="email" name="email"><br><br>
-
         <h3>Dados Profissionais</h3>
         <label>Cargo:</label><br>
         <input type="text" name="cargo" required><br><br>
@@ -39,6 +36,6 @@
     </form>
 
     <br>
-    <a href="funcionariosListar.jsp">Ver lista de funcionários</a>
+    <a href="funcionarios">Ver lista de funcionários</a>
 </body>
 </html>
