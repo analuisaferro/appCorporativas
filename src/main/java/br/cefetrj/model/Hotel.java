@@ -10,7 +10,6 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
@@ -20,7 +19,7 @@ public class Hotel {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
     @Column(nullable = false)
     private String nome;
@@ -31,8 +30,7 @@ public class Hotel {
     @Column(nullable = false)
     private String telefone;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
-    @JoinColumn(name = "hotel_id")
+    @OneToMany(mappedBy = "hotel", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private List<Quarto> listaDeQuartos = new ArrayList<>();
 
     public Hotel() {
@@ -45,14 +43,17 @@ public class Hotel {
     }
 
     public void adicionarQuarto(Quarto quarto) {
+        if (quarto.getHotel() != this) {
+             quarto.setHotel(this);
+        }
         listaDeQuartos.add(quarto);
     }
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -86,5 +87,8 @@ public class Hotel {
 
     public void setListaDeQuartos(List<Quarto> listaDeQuartos) {
         this.listaDeQuartos = listaDeQuartos;
+        if (listaDeQuartos != null) {
+            listaDeQuartos.forEach(quarto -> quarto.setHotel(this));
+        }
     }
 }

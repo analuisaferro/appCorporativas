@@ -1,23 +1,18 @@
 package br.cefetrj.model;
 
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
+// Funcionario herda o ID, Nome, CPF e Telefone de Pessoa
 @Entity
 @Table(name = "funcionarios")
 public class Funcionario extends Pessoa {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
-
     private String cargo;
     private double salario;
+    
     private String login;
-    private String senha;
+    private String senha; 
 
     public Funcionario() {
         super();
