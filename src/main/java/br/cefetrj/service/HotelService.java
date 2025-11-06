@@ -2,6 +2,7 @@ package br.cefetrj.service;
 
 import java.util.List;
 import java.util.Optional;
+
 import org.springframework.stereotype.Service;
 
 import br.cefetrj.model.Hotel;
@@ -24,11 +25,11 @@ public class HotelService {
         repository.save(entity);
     }
 
-    public void delete(Integer id) {
+    public void delete(Long id) {
         repository.deleteById(id);
     }
 
-    public Optional<Hotel> findById(Integer id) {
+    public Optional<Hotel> findById(Long id) {
         return repository.findById(id);
     }
 
