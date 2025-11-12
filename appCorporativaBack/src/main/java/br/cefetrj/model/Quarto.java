@@ -12,14 +12,6 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
-// Presume-se que a classe 'TipoQuarto' (Enum) está definida no mesmo pacote.
-// Exemplo de TipoQuarto.java (apenas para referência):
-/*
-public enum TipoQuarto {
-    SOLTEIRO, CASAL, LUXO, SUITE_PRESIDENCIAL
-}
-*/
-
 @Entity
 @Table(name = "quarto")
 public class Quarto {
@@ -39,7 +31,7 @@ public class Quarto {
     private double precoNoite;
 
     @Column(nullable = false)
-    private boolean status = false; // false = livre (padrão), true = ocupado
+    private boolean status = false;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "hotel_id", nullable = false)
@@ -48,7 +40,6 @@ public class Quarto {
     public Quarto() {
     }
 
-    // Construtor completo com Hotel
     public Quarto(Integer numero, TipoQuarto tipo, double precoNoite, boolean status, Hotel hotel) {
         this.numero = numero;
         this.tipo = tipo;

@@ -1,70 +1,82 @@
 package br.cefetrj.controller;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import br.cefetrj.model.Hospede;
-import br.cefetrj.repository.HospedeRepository;
+import br.cefetrj.service.HospedeService;
+import br.cefetrj.to.input.HospedeTOInput;
+import br.cefetrj.to.output.HospedeTOOutput;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Operation;
 
 @RestController
-@RequestMapping("/hospedes")
+@RequestMapping(value = "/hospedes", produces = MediaType.APPLICATION_JSON_VALUE)
+@Tag(name = "Hóspedes", description = "Endpoints para gerenciamento de hóspedes")
 @CrossOrigin(origins = "*")
 public class HospedeController {
 
+    private final HospedeService hospedeService;
+
     @Autowired
-    private HospedeRepository hospedeRepository;
-
-    @GetMapping
-    public List<Hospede> listarTodos() {
-        return hospedeRepository.findAll();
-    }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<Hospede> buscarPorId(@PathVariable Long id) {
-        Optional<Hospede> hospede = hospedeRepository.findById(id);
-        return hospede.map(ResponseEntity::ok)
-                      .orElse(ResponseEntity.notFound().build());
+    public HospedeController(HospedeService hospedeService) {
+        this.hospedeService = hospedeService;
     }
 
     @PostMapping
-    public Hospede criar(@RequestBody Hospede hospede) {
-        return hospedeRepository.save(hospede);
+    @Operation(summary = "Salvar hóspede", description = "Cadastra um novo hóspede no banco de dados")
+    public ResponseEntity<HospedeTOOutput> save(@RequestBody HospedeTOInput input) {
+        Hospede hospede = input.build();
+        Hospede created = hospedeService.save(hospede);
+        return new ResponseEntity<>(new HospedeTOOutput(created), HttpStatus.CREATED);
+    }
+
+    @GetMapping("/{id}")
+    @Operation(summary = "Buscar por ID", description = "Retorna um hóspede pelo seu ID")
+    public ResponseEntity<HospedeTOOutput> findById(@PathVariable("id") Long id) {
+        return hospedeService.findById(id)
+                .map(hospede -> ResponseEntity.ok(new HospedeTOOutput(hospede)))
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    @GetMapping
+    @Operation(summary = "Listar todos", description = "Retorna todos os hóspedes cadastrados")
+    public ResponseEntity<List<HospedeTOOutput>> findAll() {
+        List<HospedeTOOutput> hospedes = hospedeService.findAll()
+                .stream()
+                .map(HospedeTOOutput::new)
+                .toList();
+        return ResponseEntity.ok(hospedes);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Hospede> atualizar(@PathVariable Long id, @RequestBody Hospede hospedeAtualizado) {
-        return hospedeRepository.findById(id)
-                .map(hospede -> {
-                    hospede.setNome(hospedeAtualizado.getNome());
-                    hospede.setCpf(hospedeAtualizado.getCpf());
-                    hospede.setTelefone(hospedeAtualizado.getTelefone());
-                    hospede.setEmail(hospedeAtualizado.getEmail());
-                    hospede.setTelefoneEmergencia(hospedeAtualizado.getTelefoneEmergencia());
-                    Hospede atualizado = hospedeRepository.save(hospede);
-                    return ResponseEntity.ok(atualizado);
+    @Operation(summary = "Atualizar hóspede", description = "Atualiza os dados de um hóspede existente")
+    public ResponseEntity<HospedeTOOutput> update(
+            @PathVariable("id") Long id,
+            @RequestBody HospedeTOInput input) {
+
+        return hospedeService.findById(id)
+                .map(existing -> {
+                    existing.setNome(input.getNome());
+                    existing.setCpf(input.getCpf());
+                    existing.setTelefone(input.getTelefone());
+                    existing.setEmail(input.getEmail());
+                    existing.setTelefoneEmergencia(input.getTelefoneEmergencia());
+                    Hospede atualizado = hospedeService.save(existing);
+                    return ResponseEntity.ok(new HospedeTOOutput(atualizado));
                 })
-                .orElse(ResponseEntity.notFound().build());
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deletar(@PathVariable Long id) {
-        return hospedeRepository.findById(id)
-                .map(hospede -> {
-                    hospedeRepository.delete(hospede);
-                    return ResponseEntity.noContent().build();
-                })
-                .orElse(ResponseEntity.notFound().build());
+    @Operation(summary = "Excluir hóspede", description = "Remove um hóspede do banco de dados pelo seu ID")
+    public ResponseEntity<Void> deleteById(@PathVariable("id") Long id) {
+        hospedeService.delete(id);
+        return ResponseEntity.noContent().build();
     }
 }

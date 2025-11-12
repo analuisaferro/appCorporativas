@@ -3,7 +3,6 @@ package br.cefetrj.model;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 
-// Funcionario herda o ID, Nome, CPF e Telefone de Pessoa
 @Entity
 @Table(name = "funcionarios")
 public class Funcionario extends Pessoa {
