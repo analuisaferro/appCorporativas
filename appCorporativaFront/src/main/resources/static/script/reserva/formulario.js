@@ -1,8 +1,8 @@
 document.addEventListener("DOMContentLoaded", async function () {
-    let respostaHospedes = await fetch('http://localhost:8080/hotelaria/hospedes');
+    let respostaHospedes = await fetch('http://localhost:8080/hospedes');
     let listaHospedes = await respostaHospedes.json();
 
-    let respostaQuartos = await fetch('http://localhost:8080/hotelaria/quartos');
+    let respostaQuartos = await fetch('http://localhost:8080/quartos');
     let listaQuartos = await respostaQuartos.json();
 
     let parametros = {
@@ -18,9 +18,9 @@ document.addEventListener("DOMContentLoaded", async function () {
             { titulo: 'Status', dado: 'status', tipo: 'checkbox', obrigatorio: false }
         ],
         idObjeto: 'id',
-        urlCadastrar: 'http://localhost:8080/hotelaria/reservas',
-        urlEditar: 'http://localhost:8080/hotelaria/reservas',
-        urlCargaDados: 'http://localhost:8080/hotelaria/reservas/id='
+        urlCadastrar: 'http://localhost:8080/reservas',
+        urlEditar: 'http://localhost:8080/reservas',
+        urlCargaDados: 'http://localhost:8080/reservas/id='
     };
 
     await appCorporativa.criarFormulario(parametros);

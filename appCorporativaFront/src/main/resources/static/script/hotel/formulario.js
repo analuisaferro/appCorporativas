@@ -8,9 +8,9 @@ document.addEventListener("DOMContentLoaded", async function () {
             { titulo: 'Telefone', dado: 'telefone', tipo: 'textoCurto', obrigatorio: true }
         ],
         idObjeto: 'id', 
-        urlCadastrar: 'http://localhost:8080/hotelaria/hotels', 
-        urlEditar: 'http://localhost:8080/hotelaria/hotels',    
-        urlCargaDados: 'http://localhost:8080/hotelaria/hotels/id='
+        urlCadastrar: 'http://localhost:8080/hoteis', 
+        urlEditar: 'http://localhost:8080/hoteis',    
+        urlCargaDados: 'http://localhost:8080/hoteis/id='
     };
 
     await appCorporativa.criarFormulario(parametros);

@@ -12,9 +12,9 @@ document.addEventListener("DOMContentLoaded", async function () {
             { titulo: 'Senha', dado: 'senha', tipo: 'senha', obrigatorio: true }
         ],
         idObjeto: 'id', 
-        urlCadastrar: 'http://localhost:8080/hotelaria/funcionarios',
-        urlEditar: 'http://localhost:8080/hotelaria/funcionarios',
-        urlCargaDados: 'http://localhost:8080/hotelaria/funcionarios/id=' 
+        urlCadastrar: 'http://localhost:8080/funcionario',
+        urlEditar: 'http://localhost:8080/funcionario',
+        urlCargaDados: 'http://localhost:8080/funcionario/id=' 
     };
 
     await appCorporativa.criarFormulario(parametros);

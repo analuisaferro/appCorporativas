@@ -1,7 +1,7 @@
 document.addEventListener("DOMContentLoaded", async function () {
     let parametros = {
         idTabela: 'tabelaQuarto',
-        url: 'http://localhost:8080/hotelaria/quartos',
+        url: 'http://localhost:8080/quartos',
         colunas: [
             { titulo: 'ID', dado: 'id' },
             { titulo: 'Número', dado: 'numero' },
@@ -13,7 +13,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         exibeEditar: true,
         idEnvio: 'id',
         exibeRemover: true,
-        urlRemover: 'http://localhost:8080/hotelaria/quartos',
+        urlRemover: 'http://localhost:8080/quartos',
         urlEditar: 'formulario.html?id='
     };
 

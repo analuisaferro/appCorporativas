@@ -10,9 +10,9 @@ document.addEventListener("DOMContentLoaded", async function () {
             { titulo: 'Telefone Emergência', dado: 'telefoneEmergencia', tipo: 'textoCurto', obrigatorio: false }
         ],
         idObjeto: 'id', 
-        urlCadastrar: 'http://localhost:8080/hotelaria/hospedes', 
-        urlEditar: 'http://localhost:8080/hotelaria/hospedes',    
-        urlCargaDados: 'http://localhost:8080/hotelaria/hospedes/id=' 
+        urlCadastrar: 'http://localhost:8080/hospedes', 
+        urlEditar: 'http://localhost:8080/hospedes',    
+        urlCargaDados: 'http://localhost:8080/hospedes/id=' 
     };
 
     await appCorporativa.criarFormulario(parametros);

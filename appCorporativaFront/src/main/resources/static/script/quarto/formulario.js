@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", async function () {
 
-    let resposta = await fetch('http://localhost:8080/hotelaria/hotels');
+    let resposta = await fetch('http://localhost:8080/hoteis');
     let listaHoteis = await resposta.json();
 
     let parametros = {
@@ -16,9 +16,9 @@ document.addEventListener("DOMContentLoaded", async function () {
             }
         ],
         idObjeto: 'id',
-        urlCadastrar: 'http://localhost:8080/hotelaria/quartos',
-        urlEditar: 'http://localhost:8080/hotelaria/quartos',
-        urlCargaDados: 'http://localhost:8080/hotelaria/quartos/id='
+        urlCadastrar: 'http://localhost:8080/quartos',
+        urlEditar: 'http://localhost:8080/quartos',
+        urlCargaDados: 'http://localhost:8080/quartos/id='
     };
 
     await appCorporativa.criarFormulario(parametros);
