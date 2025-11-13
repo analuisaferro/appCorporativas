@@ -1,0 +1,40 @@
+body {
+    background-color: #fde2e4;
+    color: #4b3c3c;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    padding: 40px;
+    text-align: center;
+}
+
+h1 {
+    color: #b83280;
+    margin-bottom: 30px;
+}
+
+.menu h2 {
+    color: #833471;
+    margin-bottom: 20px;
+}
+
+.menu ul {
+    list-style: none;
+    padding: 0;
+}
+
+.menu ul li {
+    margin: 10px 0;
+}
+
+.menu ul li a {
+    display: inline-block;
+    padding: 12px 20px;
+    background-color: #b83280;
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    transition: background-color 0.3s;
+}
+
+.menu ul li a:hover {
+    background-color: #833471;
+}
